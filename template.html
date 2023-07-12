@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+</head>
+
+<body>
+  <div id="app">
+    <v-app>
+      <div class="d-flex justify-center" style="width:100vw;">
+        <div class="d-flex justify-center mt-12" style="width:80vw;">
+          <v-text-field dense flat hide-details label="Search Tempate" prepend-inner-icon="mdi-magnify" solo-inverted>
+          </v-text-field>
+          <v-btn outlined class="ml-3" @click="onClose">close</v-btn>
+        </div>
+      </div>
+      <div class="d-flex justify-center" style="width:100vw; min-height:100vh;">
+        <div class="d-flex flex-wrap justify-center px-1">
+          <v-card v-for="t in tiles" class="mx-1 mt-12" style="width:370px; height: 484px;">
+            <v-img height="250" :src="`http://localhost:5555/template/preview?image=${t.template}`"></v-img>
+            <v-card-title>{{t.title}}</v-card-title>
+            <v-card-text>
+              <v-row align="center" class="mx-0">
+                <v-rating :value="5" color="amber" dense half-increments readonly size="14"></v-rating>
+              </v-row>
+              <div class="my-4 subtitle-1">{{t.keyword}}</div>
+              <div>{{t.description}}</div>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="deep-purple lighten-2" text @click="onApply(t.template)">
+                Apply
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </div>
+      </div>
+    </v-app>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        tiles: [{
+          title: 'Progress circular',
+          keyword: 'Loading, Blocking, Waitting',
+          description: 'Layout佈滿整個畫面，中間進度環為200x200置中大小的環',
+          template: 'common/loading_200x200'
+        },{
+          title: 'Main Content View',
+          keyword: 'Layout',
+          description: 'AiMS Layout 中間主要呈現區域',
+          template: 'aims/content_view'
+        }]
+      },
+      methods: {
+        onApply(template) {
+          const message = {
+            event: '/v2/browser/apply/template',
+            payload: { template }
+          };
+          parent.postMessage(message, 'http://localhost:3000');
+        },
+        onClose() {
+          const message = {
+            event: '/v2/browser/close/template',
+            payload: {}
+          };
+          parent.postMessage(message, 'http://localhost:3000');
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
